@@ -1,0 +1,70 @@
+project:
+  type: website
+
+website:
+  title: "ISSS608-VAA"
+  navbar:
+    left:
+      - text: "Hands-on Exercise"
+        menu:
+        - text: "1 - A Layered Grammar of Graphics: ggplot2 methods"
+          href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
+        - text: "2"
+          href: "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html"
+        - text: "3"
+          href: "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html"
+        - text: "4"
+          href: "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html"
+        - text: "5"
+          href: "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html"
+        - text: "6"
+          href: "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html"
+        - text: "7"
+          href: "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html"
+        - text: "8"
+          href: "Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08.html"
+        - text: "9"
+          href: "Hands-on_Ex/Hands-on_Ex09/Hands-on_Ex09.html"
+        - text: "10"
+          href: "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html"
+      - text: "In-class Exercise"
+        menu: 
+        - text: "1"
+          href: In-class_Ex/In-class_Ex01/In-class_Ex01.html
+        - text: "2"
+          href: In-class_Ex/In-class_Ex02/In-class_Ex02.html
+        - text: "3"
+          href: In-class_Ex/In-class_Ex03/In-class_Ex03.html
+        - text: "4"
+          href: In-class_Ex/In-class_Ex04/In-class_Ex04.html
+        - text: "5"
+          href: In-class_Ex/In-class_Ex05/In-class_Ex05.html
+        - text: "6"
+          href: In-class_Ex/In-class_Ex06/In-class_Ex06.html
+        - text: "7"
+          href: In-class_Ex/In-class_Ex07/In-class_Ex07.html
+        - text: "8"
+          href: In-class_Ex/In-class_Ex08/In-class_Ex08.html
+        - text: "9"
+          href: In-class_Ex/In-class_Ex09/In-class_Ex09.html
+        - text: "10"
+          href: In-class_Ex/In-class_Ex10/In-class_Ex10.html
+      - text: "Take-home Exercise"
+        menu: 
+        - text: "1"
+          href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
+    right:
+      - href: index.qmd
+        text: Home
+      - text: "{{< iconify fa6-brands linkedin size=2xl >}}"
+        href: 'https://www.linkedin.com/in/nguyenbaothuphuong/'
+format:
+  html:
+    theme: zephyr
+    css: styles.css
+    toc: true
+    number-sections: true
+    code-copy: true
+
+editor: visual
+
