@@ -136,7 +136,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 
 The following code chunk demonstrates key animation techniques:
 
--    [`transition_time()`](https://gganimate.com/reference/transition_time.html) : A function from **gganimate** that creates transitions across distinct time states, such as `Year`.
+-   [`transition_time()`](https://gganimate.com/reference/transition_time.html) : A function from **gganimate** that creates transitions across distinct time states, such as `Year`.
 
 -   **`ease_aes()`**: Controls the easing of aesthetics during transitions. By default, easing is linear, but other methods include quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce, allowing for smoother or more dynamic effects.
 

@@ -467,5 +467,82 @@
     "title": "Hands-on Exercise 3.2: Programming Animated Statistical Graphics with R",
     "section": "4.2 Building an animated bubble plot: plot_ly() method",
     "text": "4.2 Building an animated bubble plot: plot_ly() method\nIn this sub-section, we explore how to create an animated bubble plot using plot_ly() method.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(2, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "",
+    "text": "Visualizing distributions is a fundamental aspect of statistical analysis. While Chapter 1 introduced common methods like histograms, density curves, boxplots, notch plots, and violin plots using ggplot2, this chapter explores two relatively new and effective techniques: ridgeline plots and raincloud plots. We will demonstrate how to create these visualizations using ggplot2 and its extensions."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#installing-and-loading-the-packages",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#installing-and-loading-the-packages",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "2.1 Installing and loading the packages",
+    "text": "2.1 Installing and loading the packages\nFor this exercise, we will utilize the following R packages:\n\nggridges: For creating ridgeline plots.\nggdist: For visualizing distributions and uncertainty.\ntidyverse: A collection of R packages for data science and visualization.\nggthemes: To access additional themes, scales, and geoms for ggplot2.\ncolorspace: To provide a comprehensive toolbox for color selection and manipulation.\n\nThe code chunk below loads these packages into Rstudio environment.\n\npacman::p_load(ggdist, ggridges, ggthemes,\n               colorspace, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#data-import",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#data-import",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "2.2 Data import",
+    "text": "2.2 Data import\nExam_data.csv will be used for this exercise.\nThe code chunk below uses read_csv() of readr package to import Exam_data.csv into R and saved it into a tibble data.frame.\n\nexam &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#plotting-ridgeline-graph-ggridges-method",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#plotting-ridgeline-graph-ggridges-method",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "3.1 Plotting ridgeline graph: ggridges method",
+    "text": "3.1 Plotting ridgeline graph: ggridges method\nSeveral methods exist for creating ridgeline plots in R. This section focuses on using ggridges package, which provides two primary geoms for this purpose:\n\ngeom_ridgeline(): This geom directly uses height values to draw the ridgelines.\ngeom_density_ridges(): This geom first estimates data densities and then draws the ridgelines based on these density estimates.\n\nThe following ridgeline plot is created using geom_density_ridges()\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = ENGLISH, \n           y = CLASS)) +\n  geom_density_ridges(\n    scale = 3,\n    rel_min_height = 0.01,\n    bandwidth = 3.4,\n    fill = lighten(\"#7097BB\", .3),\n    color = \"white\"\n  ) +\n  scale_x_continuous(\n    name = \"English grades\",\n    expand = c(0, 0)\n    ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#varying-fill-colors-along-the-x-axis",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#varying-fill-colors-along-the-x-axis",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "3.2 Varying fill colors along the x axis",
+    "text": "3.2 Varying fill colors along the x axis\nSometimes we desire ridgeline plots where the area under each curve is not filled with a single solid color but rather with a gradient of colors along the x-axis. This effect can be achieved using either geom_ridgeline_gradient() or geom_density_ridges_gradient(). These functions operate similarly to geom_ridgeline() and geom_density_ridges(), respectively, but with the added capability of varying fill colors. However, it’s important to note that these functions currently do not support both changing fill colors and transparency simultaneously.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = ENGLISH, \n           y = CLASS,\n           fill = stat(x))) +\n  geom_density_ridges_gradient(\n    scale = 3,\n    rel_min_height = 0.01) +\n  scale_fill_viridis_c(name = \"Temp. [F]\",\n                       option = \"C\") +\n  scale_x_continuous(\n    name = \"English grades\",\n    expand = c(0, 0)\n  ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#mapping-the-probabilities-directly-onto-colour",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#mapping-the-probabilities-directly-onto-colour",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "3.3 Mapping the probabilities directly onto colour",
+    "text": "3.3 Mapping the probabilities directly onto colour\nThe ggridges package not only provides specialized geoms for creating ridgeline plots but also offers stat_density_ridges(), a function that replaces stat_density() from ggplot2. This function is specifically designed for use within the ggridges package.\nThe figure below illustrates a ridgeline plot created by mapping the probabilities calculated using stat(ecdf), which represents the empirical cumulative density function for the distribution of English scores.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = 0.5 - abs(0.5-stat(ecdf)))) +\n  stat_density_ridges(geom = \"density_ridges_gradient\", \n                      calc_ecdf = TRUE) +\n  scale_fill_viridis_c(name = \"Tail probability\",\n                       direction = -1) +\n  theme_ridges()\n\n\n\n\nIt is important to include the argument calc_ecdf = TRUE in stat_density_ridges()."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#ridgeline-plots-with-quantile-lines",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#ridgeline-plots-with-quantile-lines",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "3.4 Ridgeline plots with quantile lines",
+    "text": "3.4 Ridgeline plots with quantile lines\nUsing geom_density_ridges_gradient(), we can colour the ridgeline plot by quantile using the calculated stat(quantile) aesthetic as shown in the figure below.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = factor(stat(quantile))\n           )) +\n  stat_density_ridges(\n    geom = \"density_ridges_gradient\",\n    calc_ecdf = TRUE, \n    quantiles = 4,\n    quantile_lines = TRUE) +\n  scale_fill_viridis_d(name = \"Quartiles\") +\n  theme_ridges()\n\n\n\n\nInstead of defining quantiles using numerical values, we can specify them by cut points such as 2.5% and 97.5% to color the ridgeline plot. This approach highlights the tails of the distribution, providing insights into extreme values.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = factor(stat(quantile))\n           )) +\n  stat_density_ridges(\n    geom = \"density_ridges_gradient\",\n    calc_ecdf = TRUE, \n    quantiles = c(0.025, 0.975)\n    ) +\n  scale_fill_manual(\n    name = \"Probability\",\n    values = c(\"#FF0000A0\", \"#A0A0A0A0\", \"#0000FFA0\"),\n    labels = c(\"(0, 0.025]\", \"(0.025, 0.975]\", \"(0.975, 1]\")\n  ) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#plotting-a-half-eye-graph",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#plotting-a-half-eye-graph",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "4.1 Plotting a Half Eye graph",
+    "text": "4.1 Plotting a Half Eye graph\nWe start by plotting a Half-Eye graph using stat_halfeye() from the ggdist package. This function creates a visualization that includes a half-density plot and a slab interval.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA)\n\nNote: The slab interval can be removed by setting .width = 0 and point_colour = NA."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#adding-the-boxplot-with-geom_boxplot",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#adding-the-boxplot-with-geom_boxplot",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "4.2 Adding the boxplot with geom_boxplot()",
+    "text": "4.2 Adding the boxplot with geom_boxplot()\nNext, we add the second geometry layer using geom_boxplot() of ggplot2. This produces a narrow boxplot with reduced width and adjusted opacity.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#adding-the-dot-plots-with-stat_dots",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#adding-the-dot-plots-with-stat_dots",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "4.3 Adding the Dot Plots with stat_dots()",
+    "text": "4.3 Adding the Dot Plots with stat_dots()\nTo enhance the visualization, we incorporate a third geometric layer using stat_dots() from the ggdist package. This creates a half-dotplot, which resembles a histogram and visually represents the number of samples (dots) within each bin. By setting side = \"left\", we position the dotplot to the left-hand side of the raincloud plot.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 2)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#finishing-touch",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex041.html#finishing-touch",
+    "title": "Hands-on Exercise 4.1: Visualising Distribution",
+    "section": "4.4 Finishing touch",
+    "text": "4.4 Finishing touch\nFinally, coord_flip() from the ggplot2 package is employed to rotate the raincloud plot horizontally, creating the characteristic raincloud shape. Additionally, theme_economist() from the ggthemes package is applied to enhance the visual appeal of the plot, providing a professional and publication-ready aesthetic.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 1.5) +\n  coord_flip() +\n  theme_economist()"
   }
 ]
