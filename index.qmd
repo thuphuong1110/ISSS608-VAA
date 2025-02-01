@@ -1,5 +1,5 @@
 ---
-title: "Visua Analytics and Application (ISSS608)"
+title: "Visual Analytics and Application (ISSS608)"
 author: "Nguyen Bao Thu Phuong"
 execute:
   eval: true
