@@ -1006,5 +1006,75 @@
     "title": "Hands-on Exercise 5.1: Creating Ternary Plot with R",
     "section": "4.2 Plotting an interative ternary diagram",
     "text": "4.2 Plotting an interative ternary diagram\nThe code below creates an interactive ternary plot using plot_ly() function of Plotly R.\n\n# reusable function for creating annotation object\nlabel &lt;- function(txt) {\n  list(\n    text = txt, \n    x = 0.1, y = 1,\n    ax = 0, ay = 0,\n    xref = \"paper\", yref = \"paper\", \n    align = \"center\",\n    font = list(family = \"serif\", size = 15, color = \"white\"),\n    bgcolor = \"#b3b3b3\", bordercolor = \"black\", borderwidth = 2\n  )\n}\n\n# reusable function for axis formatting\naxis &lt;- function(txt) {\n  list(\n    title = txt, tickformat = \".0%\", tickfont = list(size = 10)\n  )\n}\n\nternaryAxes &lt;- list(\n  aaxis = axis(\"Young\"), \n  baxis = axis(\"Active\"), \n  caxis = axis(\"Old\")\n)\n\n# Initiating a plotly visualization \nplot_ly(\n  agpop_mutated, \n  a = ~YOUNG, \n  b = ~ACTIVE, \n  c = ~OLD, \n  color = I(\"black\"), \n  type = \"scatterternary\"\n) %&gt;%\n  layout(\n    annotations = label(\"Ternary Markers\"), \n    ternary = ternaryAxes\n  )"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "",
+    "text": "Parallel coordinates plots are designed for visualizing multivariate numerical data, making it easier to compare multiple variables and identify relationships. Originally developed by Alfred Inselberg in the 1970s, this technique is widely used in academic and scientific analysis rather than general business reporting. As Stephen Few (2006) noted, parallel coordinates plots are most effective for interactive data exploration rather than for presenting findings to a broad audience.\nIn this hands-on exercise, we will explore:\n\nCreate static parallel coordinates plots using ggparcoord() from the GGally package.\nBuild interactive plots with the parcoords package.\nUse the parallelPlot package for further interactive visualization."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#plotting-a-simple-parallel-coordinates",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#plotting-a-simple-parallel-coordinates",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "4.1 Plotting a simple parallel coordinates",
+    "text": "4.1 Plotting a simple parallel coordinates\nThe code chunk below plots a basic static parallel coordinates plot using ggparcoord().\n\nggparcoord(data = wh, \n           columns = c(7:12))\n\n\n\n\n\n\n\n\nThe basic parallel coordinates plot only uses two main arguments:\n\ndata: Maps the dataset (e.g., wh).\ncolumns: Selects the variables for the parallel coordinates plot."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#plotting-a-parallel-coordinates-with-boxplot",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#plotting-a-parallel-coordinates-with-boxplot",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "4.2 Plotting a parallel coordinates with boxplot",
+    "text": "4.2 Plotting a parallel coordinates with boxplot\nThe basic plot may not effectively reveal insights into World Happiness measures. In this section, w4e explore how to refine the visualization using additional arguments provided by ggparcoord().\n\nggparcoord(data = wh, \n           columns = c(7:12), \n           groupColumn = 2,\n           scale = \"uniminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Parallel Coordinates Plot of World Happines Variables\")\n\n\n\n\n\n\n\n\nKey takeaways from the above code chunk\n\nThe groupColumn argument groups observations by a variable (e.g., Region) and colors the lines accordingly.\nThe scale argument uses the uniminmax method to scale each variable between 0 and 1.\nThe alphaLines argument adjusts line transparency, with a value of 0.2 in this case (valid range: 0-1).\nThe boxplot argument enables boxplots with TRUE (default: FALSE).\nThe title argument adds a title to the parallel coordinates plot."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#parallel-coordinates-with-facet",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#parallel-coordinates-with-facet",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "4.3 Parallel coordinates with facet",
+    "text": "4.3 Parallel coordinates with facet\nSince ggparcoord() extends the ggplot2 package, it allows integration with ggplot2 functions. In the code chunk below, facet_wrap() is used to create multiple small parallel coordinates plots, each representing a different geographical region, such as East Asia.\n\nggparcoord(data = wh, \n           columns = c(7:12), \n           groupColumn = 2,\n           scale = \"uniminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Multiple Parallel Coordinates Plots of World Happines Variables by Region\") +\n  facet_wrap(~ Region)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#rotating-x-axis-text-label",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#rotating-x-axis-text-label",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "4.4 Rotating x-axis text label",
+    "text": "4.4 Rotating x-axis text label\nTo make the x-axis text label easy to read, we rotate the labels by 30 degrees. We can rotate axis text labels using theme() function in ggplot2 as shown in the code chunk below.\n\nggparcoord(data = wh, \n           columns = c(7:12), \n           groupColumn = 2,\n           scale = \"uniminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Multiple Parallel Coordinates Plots of World Happines Variables by Region\") +\n  facet_wrap(~ Region) + \n  theme(axis.text.x = element_text(angle = 30))\n\n\n\n\n\n\n\n\nTo rotate x-axis text labels, axis.text.x argument of theme() function was used, specifying element_text(angle = 30) to rotate the x-axis text by an angle 30 degree."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#adjusting-the-rotated-x-axis-text-label",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#adjusting-the-rotated-x-axis-text-label",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "4.5 Adjusting the rotated x-axis text label",
+    "text": "4.5 Adjusting the rotated x-axis text label\nRotating x-axis text labels to 30 degrees may cause overlap with the plot. To avoid this, the text position can be adjusted using the hjust argument within element_text() in the theme() function. The axis.text.x element is used to modify the appearance of x-axis text.\n\nggparcoord(data = wh, \n           columns = c(7:12), \n           groupColumn = 2,\n           scale = \"uniminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Multiple Parallel Coordinates Plots of World Happines Variables by Region\") +\n  facet_wrap(~ Region) + \n  theme(axis.text.x = element_text(angle = 30, hjust=1))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#the-basic-plot",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#the-basic-plot",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "5.1 The basic plot",
+    "text": "5.1 The basic plot\nThe code chunk below plots an interactive parallel coordinates plot using parallelPlot().\n\nwh &lt;- wh %&gt;%\n  select(\"Happiness score\", c(7:12))\nparallelPlot(wh,\n             width = 320,\n             height = 250)\n\n\n\n\n\nNotice that some of the axis labels are too long. We will overcome this problem in the next step."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#rotate-axis-label",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#rotate-axis-label",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "5.2 Rotate axis label",
+    "text": "5.2 Rotate axis label\nIn the code chunk below, rotateTitle argument is used to avoid overlapping axis labels.\n\nparallelPlot(wh,\n             rotateTitle = TRUE)\n\n\n\n\n\nAs the parallel plot is interactive, we can click on a variable of interest, for example Happiness score, the monotonous blue colour (default) will change to blues with different intensity."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#changing-the-colour-scheme",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#changing-the-colour-scheme",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "5.3 Changing the colour scheme",
+    "text": "5.3 Changing the colour scheme\nWe can change the default blue colour scheme using continousCS argument as shown in the code chunk below.\n\nparallelPlot(wh,\n             continuousCS = \"YlOrRd\",\n             rotateTitle = TRUE)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#parallel-coordinates-plot-with-histogram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html#parallel-coordinates-plot-with-histogram",
+    "title": "Hands-on Exercise 5.4: Visual Multivariate Analysis with Parallel Coordinates Plot",
+    "section": "5.4 Parallel coordinates plot with histogram",
+    "text": "5.4 Parallel coordinates plot with histogram\nIn the code chunk below, histoVisibility argument is used to plot histogram along the axis of each variables.\n\nhistoVisibility &lt;- rep(TRUE, ncol(wh))\nparallelPlot(wh,\n             rotateTitle = TRUE,\n             histoVisibility = histoVisibility)"
   }
 ]
