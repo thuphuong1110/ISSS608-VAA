@@ -782,5 +782,229 @@
     "title": "Hands-on Exercise 4.4: Funnel Plots for Fair Comparisons",
     "section": "5.4 Interactive Funnel Plot: plotly + ggplot2",
     "text": "5.4 Interactive Funnel Plot: plotly + ggplot2\nThe funnel plot created using ggplot2 functions can be made interactive with ggplotly() of plotly package.\n\nfp_ggplotly &lt;- ggplotly(p,\n  tooltip = c(\"label\", \n              \"x\", \n              \"y\"))\nfp_ggplotly"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "",
+    "text": "The correlation coefficient is a widely used statistical measure that quantifies the type and strength of the relationship between two variables. The coefficient ranges from -1.0 to 1.0:\n\n1.0 indicates a perfect positive linear relationship.\n-1.0 indicates a perfect negative (inverse) linear relationship.\n0.0 indicates no linear relationship between the variables.\n\nWhen analyzing multivariate data, pairwise correlation coefficients are typically displayed in a structured format called a correlation matrix or scatterplot matrix.\nThere are three key reasons to computing a correlation matrix:\n\nUnderstanding Relationships – Reveals pairwise relationships between high-dimensional variables.\nInput for Further Analyses – Used in exploratory factor analysis, confirmatory factor analysis, structural equation modeling, and linear regression (especially when handling missing values pairwise).\nDiagnostic Tool – Helps assess data relationships before conducting statistical modeling. For example, high correlations may indicate multicollinearity, which can make regression estimates unreliable.\n\nWhen working with large datasets (many observations and variables), a Corrgram is useful for visually exploring correlations. A corrgram organizes data using two main principles:\n\nDepicting correlation values – Uses color or shape to represent both sign and magnitude of correlations.\nReordering variables – Groups “similar” variables adjacently for better interpretability.\n\nThis exercise is divided into three key sections:\n\nCreating a Correlation Matrix – Using the pairs() function from R Graphics.\nPlotting a Corrgram – Using the corrplot package.\nBuilding an Interactive Correlation Matrix – Using the Plotly R package."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#importing-data",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#importing-data",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "3.1 Importing Data",
+    "text": "3.1 Importing Data\nFirst we import the data into R using read_csv() of readr package.\n\nwine &lt;- read_csv(\"data/wine_quality.csv\")\n\nNote that beside quality and type, the rest of the variables are continuous numerical data type."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#building-a-basic-correlation-matrix",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#building-a-basic-correlation-matrix",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "4.1 Building a basic correlation matrix",
+    "text": "4.1 Building a basic correlation matrix\nThe figure below shows the scatter plot matrix of Wine Quality Data.\n\npairs(wine[,1:11])\n\n\n\n\n\n\n\n\nThe pairs() function requires input in the form of a matrix or data frame. Creating a scatterplot matrix using this function is straightforward.\nIn the following code chunk, the pairs() function is applied to columns 2 to 12 of the wine data frame. These columns represent key variables such as fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, and alcohol. The resulting scatterplot matrix helps visualize pairwise relationships among these variables.\n\npairs(wine[,2:12])"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#drawing-the-lower-corner",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#drawing-the-lower-corner",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "4.2 Drawing the lower corner",
+    "text": "4.2 Drawing the lower corner\nThe pairs() function in R Graphics offers various customization options. One common practice is to display only the upper or lower half of the correlation matrix, rather than both, since the matrix is symmetric.\nTo visualize only the lower half of the correlation matrix, the upper.panel argument is used. The following code chunk demonstrates this approach, allowing for a cleaner and more interpretable scatterplot matrix.\n\npairs(wine[,2:12], upper.panel = NULL)\n\n\n\n\n\n\n\n\nSimilarly, we can display the upper half of the correlation matrix using the code chunk below.\n\npairs(wine[,2:12], lower.panel = NULL)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#including-with-correlation-coefficients",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#including-with-correlation-coefficients",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "4.3 Including with correlation coefficients",
+    "text": "4.3 Including with correlation coefficients\nTo display the correlation coefficient for each pair of variables instead of scatterplots, the panel.cor function can be used. This function also scales the font size according to the magnitude of the correlation, making it easier to interpret higher correlations at a glance.\nFor now, simply enter the code into your R session or script and explore the results. Next, we’ll look at a more engaging way to visualize the correlation matrix.\n\npanel.cor &lt;- function(x, y, digits=2, prefix=\"\", cex.cor, ...) {\nusr &lt;- par(\"usr\")\non.exit(par(usr))\npar(usr = c(0, 1, 0, 1))\nr &lt;- abs(cor(x, y, use=\"complete.obs\"))\ntxt &lt;- format(c(r, 0.123456789), digits=digits)[1]\ntxt &lt;- paste(prefix, txt, sep=\"\")\nif(missing(cex.cor)) cex.cor &lt;- 0.8/strwidth(txt)\ntext(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)\n}\n\npairs(wine[,2:12], \n      upper.panel = panel.cor)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#the-basic-plot",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#the-basic-plot",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "5.1 The basic plot",
+    "text": "5.1 The basic plot\nOne key advantage of using ggcorrmat() from the ggstatsplot package is its ability to generate a comprehensive and professional statistical report alongside the correlation matrix, as illustrated in the example below.\n\nggcorrmat(\n  data = wine, \n  cor.vars = 1:11)\n\n\n\n\n\n\n\n\n\nggcorrmat(\n  data = wine, \n  cor.vars = 1:11,\n  ggcorrplot.args = list(outline.color = \"black\", \n                         hc.order = TRUE,\n                         tl.cex = 10),\n  title    = \"Correlogram for wine dataset\",\n  subtitle = \"Four pairs are no significant at p &lt; 0.05\"\n)\n\n\n\n\n\n\n\n\nKey takeaways from the above code Chunk\n\ncor.vars: Specifies the variables used to compute the correlation matrix required for constructing the corrgram.\nggcorrplot.args: Provides additional (mainly aesthetic) arguments passed to ggcorrplot::ggcorrplot(). However, it should exclude certain arguments (corr, method, p.mat, sig.level, ggtheme, colors, lab, pch, legend.title, and digits), as these are already internally handled.\n\nThe below sub-code chunk demonstrates how to fine-tune specific components of the plot, such as adjusting the font size for the x-axis, y-axis, and statistical report.\n\nggplot.component = list(\n    theme(text=element_text(size=5),\n      axis.text.x = element_text(size = 8),\n      axis.text.y = element_text(size = 8)))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#getting-started-with-corrplot",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#getting-started-with-corrplot",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "7.1 Getting started with corrplot",
+    "text": "7.1 Getting started with corrplot\nTo create a correlation plot (corrgram) using corrplot(), we first need to compute the correlation matrix of the wine data frame. In the code below, we use the cor() function from R’s stats package to calculate the correlation matrix of the wine data frame.\n\nwine.cor &lt;- cor(wine[, 1:11])\n\nNext, corrplot() is used to plot the corrgram using all the default setting as shown in the code chunk below.\n\ncorrplot(wine.cor)\n\n\n\n\n\n\n\n\nNotice that the default visual element used to plot the correlation matrix is a circle. The layout of the correlation plot (corrgram) is symmetric by default. The default color scheme is a diverging blue-red palette: blue colors represent pairs of variables with positive correlation coefficients, while red colors represent pairs with negative correlation coefficients. The intensity of the color, or saturation, indicates the strength of the correlation. Darker colors reflect a stronger linear relationship between the paired variables, while lighter colors suggest a weaker linear relationship."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#working-with-visual-geometrics",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#working-with-visual-geometrics",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "7.2 Working with visual geometrics",
+    "text": "7.2 Working with visual geometrics\nThe corrplot package offers seven visual geometrics (specified using the method parameter) to encode attribute values. These are: circle, square, ellipse, number, shade, color, and pie, with the default set to circle. As demonstrated in the previous section, the default visual geometric for the correlation plot is a circle. However, you can change this setting by using the method argument, as shown in the code snippet below.\n\ncorrplot(wine.cor, \n         method = \"ellipse\") \n\n\n\n\n\n\n\n\nFeel free to change the method argument to other supported visual geometrics."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#working-with-layout",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#working-with-layout",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "7.3 Working with layout",
+    "text": "7.3 Working with layout\nThe corrplot() function supports three layout types: “full”, “upper”, and “lower”. By default, the layout is set to “full”, which displays the entire matrix. You can change this setting by using the type argument in corrplot().\n\ncorrplot(wine.cor, \n         method = \"ellipse\", \n         type=\"lower\")\n\n\n\n\n\n\n\n\nThe default layout of the correlation plot (corrgram) can be further customized. For instance, the diag argument can be used to turn off the diagonal cells, and the tl.col argument allows you to change the color of the axis text labels to black, as demonstrated in the code and figure below.\n\ncorrplot(wine.cor, \n         method = \"ellipse\", \n         type=\"lower\",\n         diag = FALSE,\n         tl.col = \"black\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#working-with-mixed-layout",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#working-with-mixed-layout",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "7.4 Working with mixed layout",
+    "text": "7.4 Working with mixed layout\nWith the corrplot package, you can create a correlation plot (corrgram) with a mixed visual matrix—one half displaying the visual matrix and the other half showing the numerical matrix. To achieve this, use the corrplot.mixed() function, which is a wrapper for creating this mixed visualization style.\nThe figure below demonstrates a mixed layout correlation plot generated using the wine quality data.\n\ncorrplot.mixed(wine.cor, \n               lower = \"ellipse\", \n               upper = \"number\",\n               tl.pos = \"lt\",\n               diag = \"l\",\n               tl.col = \"black\")\n\n\n\n\n\n\n\n\nThe code chunk below plots the corrgram.\n\ncorrplot.mixed(wine.cor, \n               lower = \"ellipse\", \n               upper = \"number\",\n               tl.pos = \"lt\",\n               diag = \"l\",\n               tl.col = \"black\")\n\n\n\n\n\n\n\n\nNotice that the lower and upper arguments define the visualization method for the respective halves of the correlation plot. In this case, the ellipse method is applied to the lower half of the corrgram, while the number method is used for the upper half. The tl.pos argument specifies the placement of the axis labels, and the diag argument determines the glyph displayed on the principal diagonal of the corrgram."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#combining-corrgram-with-the-significant-test",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#combining-corrgram-with-the-significant-test",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "7.5 Combining corrgram with the significant test",
+    "text": "7.5 Combining corrgram with the significant test\nIn statistical analysis, it’s important to identify which pairs of variables have correlation coefficients that are statistically significant.\nWith corrplot package, we can use the cor.mtest() to compute the p-values and confidence interval for each pair of variables.\n\nwine.sig = cor.mtest(wine.cor, conf.level= .95)\n\nNext we use the p.mat argument of corrplot function as shown in the code chunk below.\n\ncorrplot(wine.cor,\n         method = \"number\",\n         type = \"lower\",\n         diag = FALSE,\n         tl.col = \"black\",\n         tl.srt = 45,\n         p.mat = wine.sig$p,\n         sig.level = .05)\n\n\n\n\n\n\n\n\nThe figure above shows a corrgram combined with a significance test. The corrgram reveals that not all correlation pairs are statistically significant. For example, the correlation between total sulfur dioxide and free sulfur dioxide is statistically significant at the 0.1 significance level, but the correlation between total sulfur dioxide and citric acid is not."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#reorder-a-corrgram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#reorder-a-corrgram",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "7.6 Reorder a corrgram",
+    "text": "7.6 Reorder a corrgram\nMatrix reordering is crucial for uncovering hidden structures and patterns in a correlation plot (corrgram). By default, the attributes in a corrgram are sorted based on the correlation matrix (i.e., “original” order). This default can be overwritten using the order argument in corrplot(). The corrplot package currently supports four sorting methods:\n\n“AOE”: Angular order of eigenvectors (see Michael Friendly, 2002, for details).\n“FPC”: Order based on the first principal component.\n“hclust”: Order based on hierarchical clustering, with the agglomeration method specified by the hclust.method argument. The available agglomeration methods are: “ward”, “single”, “complete”, “average”, “mcquitty”, “median”, and “centroid”.\n“alphabet”: Alphabetical order.\n\nThese four sorting methods—“AOE”, “FPC”, “hclust”, and “alphabet”—are available, but more algorithms can be found in the seriation package.\n\ncorrplot.mixed(wine.cor, \n               lower = \"ellipse\", \n               upper = \"number\",\n               tl.pos = \"lt\",\n               diag = \"l\",\n               order=\"AOE\",\n               tl.col = \"black\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#reordering-a-correlation-matrix-using-hclust",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex052.html#reordering-a-correlation-matrix-using-hclust",
+    "title": "Hands-on Exercise 5.2: Visual Correlation Analysis",
+    "section": "7.7 Reordering a correlation matrix using hclust",
+    "text": "7.7 Reordering a correlation matrix using hclust\nUsing hclust, corrplot() can draw rectangles around the corrgram based on the results of hierarchical clustering.\n\ncorrplot(wine.cor, \n         method = \"ellipse\", \n         tl.pos = \"lt\",\n         tl.col = \"black\",\n         order=\"hclust\",\n         hclust.method = \"ward.D\",\n         addrect = 3)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "",
+    "text": "Heatmaps use color variations to visualize multivariate data in a tabular format, with variables in columns and observations in rows. They effectively highlight variance, patterns, similarities, and correlations among variables.\nIn this exercise, we explore how to create both static and interactive heatmaps in R for multivariate data analysis."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#importing-the-data-set",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#importing-the-data-set",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "3.1 Importing the data set",
+    "text": "3.1 Importing the data set\nThe code chunk below use read_csv() to import WHData-2018.csv into R as a tibble data frame.\n\nwh &lt;- read_csv(\"data/WHData-2018.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#preparing-the-data",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#preparing-the-data",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "3.2 Preparing the data",
+    "text": "3.2 Preparing the data\nNext, we change the rows name to country name instead of row number using the code chunk below.\n\nrow.names(wh) &lt;- wh$Country"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#transforming-the-data-frame-into-a-matrix",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#transforming-the-data-frame-into-a-matrix",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "3.3 Transforming the data frame into a matrix",
+    "text": "3.3 Transforming the data frame into a matrix\nThe data needs to be in data matrix format to plot the heatmap.\nThe code chunk below transforms wh data frame into a data matrix.\n\nwh1 &lt;- dplyr::select(wh, c(3, 7:12))\nwh_matrix &lt;- data.matrix(wh)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#heatmap-of-r-stats",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#heatmap-of-r-stats",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "4.1 heatmap() of R Stats",
+    "text": "4.1 heatmap() of R Stats\nThe below code chunk plots a heatmap using heatmap() of Base Stats.\n\nwh_heatmap &lt;- heatmap(wh_matrix,\n                      Rowv=NA, Colv=NA)\n\n\n\n\n\n\n\n\nNote:\n\nBy default, heatmap() generates a clustered heatmap.\nTo disable row and column dendrograms, set Rowv = NA and Colv = NA.\n\nTo plot a clustered heatmap, simply use the default settings, as shown in the code below.\n\nwh_heatmap &lt;- heatmap(wh_matrix)\n\n\n\n\n\n\n\n\nNote:\n\nThe order of rows and columns differs from the original wh_matrix because heatmap() applies clustering, grouping similar values together. Corresponding dendrograms are displayed alongside the heatmap.\nRed cells indicate smaller values, while larger values appear in a different shade.\nThe heatmap may be misleading if one variable (e.g., Happiness Score) has much higher values than others. This can make smaller values look indistinguishable.\nTo address this, normalization is needed. The scale argument allows scaling by rows or columns.\n\nThe code below normalizes the matrix column-wise.\n\nwh_heatmap &lt;- heatmap(wh_matrix,\n                      scale=\"column\",\n                      cexRow = 0.6, \n                      cexCol = 0.8,\n                      margins = c(10, 4))\n\n\n\n\n\n\n\n\nNote: The values are scalednow, making the heatmap more interpretable. The margins argument ensures that x-axis labels are fully visible. cexRow and cexCol control the font size for y-axis and x-axis labels, respectively."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#working-with-heatmaply",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#working-with-heatmaply",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "5.1 Working with heatmaply",
+    "text": "5.1 Working with heatmaply\nThe code chunk below creates an interactive heatmap using basic syntax from heatmaply.\n\nheatmaply(wh_matrix[, -c(1, 2, 4, 5)])\n\n\n\n\n\nNotes\n\nUnlike heatmap(), the horizontal dendrogram in heatmaply() is positioned on the left of the heatmap.\nRow text labels are displayed on the right of the heatmap.\nLong x-axis labels are rotated 135 degrees for better readability."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#data-trasformation",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#data-trasformation",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "5.2 Data trasformation",
+    "text": "5.2 Data trasformation\nMultivariate datasets often contain variables with different measurement scales, making direct comparisons difficult. To address this, heatmaply() supports three main data transformation methods: Scaling (Standardization), Normalization and Percentilization.\n\n5.2.1 Scaling method\nWhen variables are assumed to follow a normal distribution, scaling helps standardize them by subtracting the mean and dividing by the standard deviation. This transformation ensures all variables are comparable and centered around zero.\nheatmaply() supports column-wise and row-wise scaling via the scale argument. The code chunk below demonstrates how to apply column-wise scaling in heatmaply().\n\nheatmaply(wh_matrix[, -c(1, 2, 4, 5)],\n          scale = \"column\")\n\n\n\n\n\n\n\n5.2.2 Normalising method\nWhen variables come from different, possibly non-normal distributions, normalization transforms the data to a 0 to 1 scale by subtracting the minimum and dividing by the maximum of all records. This transformation preserves the shape of each variable’s distribution while making them comparable on a common scale.\nUnlike scaling, normalization is applied directly to the input dataset (e.g., wh_matrix). The code chunk below demonstrates how to normalize the dataset before generating a heatmap.\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]))\n\n\n\n\n\n\n\n5.2.3 Percentising method\nThe percentile transformation (percentize method) ranks variables and scales them between 0 and 1 by applying the empirical cumulative distribution function (ECDF) to each value. This means each transformed value represents the percentage of observations that have that value or lower.\nSimilar to the normalize method, percentize is applied directly to the input dataset (e.g., wh_matrix). The code chunk below demonstrates how to apply percentile transformation before generating a heatmap with heatmaply().\n\nheatmaply(percentize(wh_matrix[, -c(1, 2, 4, 5)]))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#clustering-algorithm",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#clustering-algorithm",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "5.3 Clustering algorithm",
+    "text": "5.3 Clustering algorithm\nheatmaply provides various hierarchical clustering algorithms to group similar rows and columns in a heatmap. The key arguments include:\n\ndistfun: Defines the distance metric (default: dist). Options include \"pearson\", \"spearman\", and \"kendall\" for correlation-based clustering.\nhclustfun: Defines the hierarchical clustering method (default: hclust).\ndist_method: Specifies the distance calculation method (default: \"euclidean\"). Other options include \"manhattan\", \"canberra\", \"minkowski\", etc.\nhclust_method: Specifies the clustering linkage method (default: \"complete\"). Options include \"ward.D\", \"single\", \"average\", \"centroid\", etc."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#manual-approach",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#manual-approach",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "5.4 Manual approach",
+    "text": "5.4 Manual approach\nThe following code demonstrates how to manually set Euclidean distance and Ward’s method (ward.D) for hierarchical clustering.\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          dist_method = \"euclidean\",\n          hclust_method = \"ward.D\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#statistical-approach",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#statistical-approach",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "5.5 Statistical approach",
+    "text": "5.5 Statistical approach\nTo identify the optimal clustering method and number of clusters, the dendextend package provides two useful functions:\n\ndend_expend(): Recommends the best clustering method by evaluating the stability of different hierarchical clustering approaches.\nfind_k(): Helps determine the optimal number of clusters by analyzing the dendrogram structure.\n\nFirst the dend_expend() function is used to compare various clustering methods and suggest the most suitable one.\n\nwh_d &lt;- dist(normalize(wh_matrix[, -c(1, 2, 4, 5)]), method = \"euclidean\")\ndend_expend(wh_d)[[3]]\n\n  dist_methods hclust_methods     optim\n1      unknown         ward.D 0.6137851\n2      unknown        ward.D2 0.6289186\n3      unknown         single 0.4774362\n4      unknown       complete 0.6434009\n5      unknown        average 0.6701688\n6      unknown       mcquitty 0.5020102\n7      unknown         median 0.5901833\n8      unknown       centroid 0.6338734\n\n\nThe output table shows that “average” method should be used as it gives the highest optimum value.\nNext, find_k() is used to determine the optimal number of cluster.\n\nwh_clust &lt;- hclust(wh_d, method = \"average\")\nnum_k &lt;- find_k(wh_clust)\nplot(num_k)\n\n\n\n\n\n\n\n\nThe figure above shows that k=3 would be good.\nThe code chunk below is composed with reference to the statistical analysis results.\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          dist_method = \"euclidean\",\n          hclust_method = \"average\",\n          k_row = 3)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#seriation",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#seriation",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "5.6 Seriation",
+    "text": "5.6 Seriation\nA common limitation of hierarchical clustering is that it does not provide a definite ordering of rows and columns in the heatmap. While the dendrogram constrains the order, it does not determine the optimal arrangement for visual clarity.\nTo address this, heatmaply leverages the seriation package to optimize row and column ordering using the Optimal Leaf Ordering (OLO) algorithm.\nHow OLO Works:\n\nOLO minimizes the sum of distances between adjacent leaves in the dendrogram.\nIt reorders clusters to enhance the readability of the heatmap.\nThis optimization is similar to solving a restricted Traveling Salesman Problem (TSP) for arranging the branches of the dendrogram.\n\nApplying OLO results in a clearer, more interpretable heatmap by minimizing unnecessary reordering within clusters.\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"OLO\")\n\n\n\n\n\nBy default, heatmaply uses the Optimal Leaf Ordering (OLO) method, which optimizes the ordering of clusters to enhance heatmap clarity. This method runs in O(n⁴) time complexity.\nAn alternative is the Gruvaeus and Wainer (GW) heuristic, which also aims to improve ordering but operates more efficiently in certain cases.\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"GW\")\n\n\n\n\n\nThe option seriate = \"mean\" gives the output we would get by default from heatmap functions in other packages such as gplots::heatmap.2.\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"mean\")\n\n\n\n\n\nThe option “none” gives us the dendrograms without any rotation that is based on the data matrix.\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"none\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#working-with-colour-palettes",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#working-with-colour-palettes",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "5.7 Working with colour palettes",
+    "text": "5.7 Working with colour palettes\nBy default, heatmaply uses the viridis color palette. However, users can customize the color scheme to enhance aesthetics and readability.\nIn the example below, the Blues palette from the RColorBrewer package is applied.\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"none\",\n          colors = Blues)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#the-finishing-touch",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex053.html#the-finishing-touch",
+    "title": "Hands-on Exercise 5.3: Heatmap for Visualising and Analysing Multivariate Data",
+    "section": "5.8 The finishing touch",
+    "text": "5.8 The finishing touch\nheatmaply offers extensive customization options to enhance both statistical analysis and visual quality.\nIn the example below:\n\nk_row creates 5 row clusters.\nmargins adjusts the top margin (60) and row margin (200).\nfontsize_row and fontsize_col set row and column label sizes to 4.\nmain, xlab, and ylab define the plot title and axis labels.\n\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          Colv=NA,\n          seriate = \"none\",\n          colors = Blues,\n          k_row = 5,\n          margins = c(NA,200,60,NA),\n          fontsize_row = 4,\n          fontsize_col = 5,\n          main=\"World Happiness Score and Variables by Country, 2018 \\nDataTransformation using Normalise Method\",\n          xlab = \"World Happiness Indicators\",\n          ylab = \"World Countries\"\n          )"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html",
+    "title": "Hands-on Exercise 5.1: Creating Ternary Plot with R",
+    "section": "",
+    "text": "Ternary plots are an effective way to visualize the distribution and variability of three-part compositional data. Examples include population structure (e.g., proportions of young, economically active, and aged populations) or soil composition (e.g., proportions of sand, silt, and clay). The plot is represented as a triangle, with each side scaled from 0 to 1, corresponding to one of the three components. A data point is positioned such that perpendicular lines drawn from the point to each side intersect at values representing its component proportions.\nIn this exercise, we explore how to programmatically create ternary plots in R to analyze and visualize Singapore’s population structure. The exercise consists of four key steps:\n\nInstall and load required packages: tidyverse and ggtern.\nDerive new measures: Use the mutate() function from the dplyr package to calculate three new proportions.\nCreate a static ternary plot: Utilize the ggtern() function from the ggtern package.\nBuild an interactive ternary plot: Use the plot_ly() function from the Plotly package"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#the-data",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#the-data",
+    "title": "Hands-on Exercise 5.1: Creating Ternary Plot with R",
+    "section": "3.1 The data",
+    "text": "3.1 The data\nFor the purpose of this hands-on exercise, the Singapore Residents by Planning AreaSubzone, Age Group, Sex and Type of Dwelling, June 2000-2018 data was downloaded and transformed into respopagsex2000to2018_tidy.csv."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#importing-data",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#importing-data",
+    "title": "Hands-on Exercise 5.1: Creating Ternary Plot with R",
+    "section": "3.2 Importing Data",
+    "text": "3.2 Importing Data\nWe use read_csv() function to import respopagsex2000to2018_tidy.csv into R as pop_data tibble dataframe.\n\n#Reading the data into R environment\npop_data &lt;- read_csv(\"data/respopagsex2000to2018_tidy.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#preparing-the-data",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#preparing-the-data",
+    "title": "Hands-on Exercise 5.1: Creating Ternary Plot with R",
+    "section": "3.3 Preparing the Data",
+    "text": "3.3 Preparing the Data\nNext, we use mutate() dplyr package to derive three new measures, namely: young, active, and old.\n\n#Deriving the young, economy active and old measures\nagpop_mutated &lt;- pop_data %&gt;%\n  mutate(`Year` = as.character(Year))%&gt;%\n  spread(AG, Population) %&gt;%\n  mutate(YOUNG = rowSums(.[4:8]))%&gt;%\n  mutate(ACTIVE = rowSums(.[9:16]))  %&gt;%\n  mutate(OLD = rowSums(.[17:21])) %&gt;%\n  mutate(TOTAL = rowSums(.[22:24])) %&gt;%\n  filter(Year == 2018)%&gt;%\n  filter(TOTAL &gt; 0)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#plotting-a-static-ternary-diagram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#plotting-a-static-ternary-diagram",
+    "title": "Hands-on Exercise 5.1: Creating Ternary Plot with R",
+    "section": "4.1 Plotting a static ternary diagram",
+    "text": "4.1 Plotting a static ternary diagram\nThe below code chunk uses ggtern() of ggtern package to create a simple ternary plot.\n\n#Building the static ternary plot\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n#Building the static ternary plot\nggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point() +\n  labs(title=\"Population structure, 2015\") +\n  theme_rgbw()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#plotting-an-interative-ternary-diagram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex051.html#plotting-an-interative-ternary-diagram",
+    "title": "Hands-on Exercise 5.1: Creating Ternary Plot with R",
+    "section": "4.2 Plotting an interative ternary diagram",
+    "text": "4.2 Plotting an interative ternary diagram\nThe code below creates an interactive ternary plot using plot_ly() function of Plotly R.\n\n# reusable function for creating annotation object\nlabel &lt;- function(txt) {\n  list(\n    text = txt, \n    x = 0.1, y = 1,\n    ax = 0, ay = 0,\n    xref = \"paper\", yref = \"paper\", \n    align = \"center\",\n    font = list(family = \"serif\", size = 15, color = \"white\"),\n    bgcolor = \"#b3b3b3\", bordercolor = \"black\", borderwidth = 2\n  )\n}\n\n# reusable function for axis formatting\naxis &lt;- function(txt) {\n  list(\n    title = txt, tickformat = \".0%\", tickfont = list(size = 10)\n  )\n}\n\nternaryAxes &lt;- list(\n  aaxis = axis(\"Young\"), \n  baxis = axis(\"Active\"), \n  caxis = axis(\"Old\")\n)\n\n# Initiating a plotly visualization \nplot_ly(\n  agpop_mutated, \n  a = ~YOUNG, \n  b = ~ACTIVE, \n  c = ~OLD, \n  color = I(\"black\"), \n  type = \"scatterternary\"\n) %&gt;%\n  layout(\n    annotations = label(\"Ternary Markers\"), \n    ternary = ternaryAxes\n  )"
   }
 ]
