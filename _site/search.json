@@ -1202,5 +1202,12 @@
     "title": "Hands-on Exercise 5.5: Treemap Visualisation with R",
     "section": "6.2 Designing An Interactive Treemap",
     "text": "6.2 Designing An Interactive Treemap\nThe codes below perform two processes.\nFirsttreemap() is used to build a treemap using selected variables in realis2018_summarised data.frame. The treemap created is save as object called tm.\n\ntm &lt;- treemap(realis2018_summarised,\n        index=c(\"Planning Region\", \"Planning Area\"),\n        vSize=\"Total Unit Sold\",\n        vColor=\"Median Unit Price ($ psm)\",\n        type=\"value\",\n        title=\"Private Residential Property Sold, 2017\",\n        title.legend = \"Median Unit Price (S$ per sq. m)\"\n        )\n\n\n\n\n\n\n\n\nThen d3tree() is used to build an interactive treemap.\n\nd3tree(tm,rootname = \"Singapore\" )"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-class_Ex04.html",
+    "href": "In-class_Ex/In-class_Ex04/In-class_Ex04.html",
+    "title": "In-class Exercise 4: Fundamentals of Visual Analytics",
+    "section": "",
+    "text": "1 Install and Load R packages\n\npacman::p_load(haven, SmartEDA, tidyverse, tidymodels)\n\n\n\n2 Import dataset\n\nexam_data = read_csv(\"data/Exam_data.csv\")\n\nRows: 322 Columns: 7\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (4): ID, CLASS, GENDER, RACE\ndbl (3): ENGLISH, MATHS, SCIENCE\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\n\n\nggplot(data=exam_data, \n       aes(y = CLASS,       \n           x= ENGLISH)) +    \n  geom_boxplot()"
   }
 ]

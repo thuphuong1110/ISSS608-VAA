@@ -1,0 +1,17 @@
+{
+  "hash": "2eb79a82d376c62da424e5fba4ebe31e",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"In-class Exercise 4: Fundamentals of Visual Analytics\"\nauthor: \"Nguyen Bao Thu Phuong\"\ndate: \"19 January 2025\" \ndate-modified: \"last-modified\"\nexecute:\n  eval: true\n  echo: true\n  message: false\n  freeze: true\n---\n\n\n\n# Install and Load R packages\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(haven, SmartEDA, tidyverse, tidymodels)\n```\n:::\n\n\n\n# Import dataset\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nexam_data = read_csv(\"data/Exam_data.csv\")\n```\n\n::: {.cell-output .cell-output-stderr}\n\n```\nRows: 322 Columns: 7\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (4): ID, CLASS, GENDER, RACE\ndbl (3): ENGLISH, MATHS, SCIENCE\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n```\n\n\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(data=exam_data, \n       aes(y = CLASS,       \n           x= ENGLISH)) +    \n  geom_boxplot()\n```\n\n::: {.cell-output-display}\n![](In-class_Ex04_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "In-class_Ex04_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
