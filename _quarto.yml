@@ -33,17 +33,9 @@ website:
           href: "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html"
         - text: "5.5 - Treemap Visualisation with R"
           href: "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex055.html"
-        - text: "6"
-          href: "Hands-on_Ex/Hands-on_Ex6/Hands-on_Ex10.html"
       - text: "In-class Exercise"
         menu: 
-        - text: "1"
-          href: In-class_Ex/In-class_Ex01/In-class_Ex01.html
-        - text: "2"
-          href: In-class_Ex/In-class_Ex02/In-class_Ex02.html
-        - text: "3"
-          href: In-class_Ex/In-class_Ex03/In-class_Ex03.html
-        - text: "4"
+        - text: "4 - Fundamentals of Visual Analytics"
           href: In-class_Ex/In-class_Ex04/In-class_Ex04.html
         - text: "5"
           href: In-class_Ex/In-class_Ex05/In-class_Ex05.html
@@ -59,7 +51,7 @@ website:
           href: In-class_Ex/In-class_Ex10/In-class_Ex10.html
       - text: "Take-home Exercise"
         menu: 
-        - text: "1"
+        - text: "1 - Creating data visualisation beyond default"
           href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
     right:
       - href: index.qmd
