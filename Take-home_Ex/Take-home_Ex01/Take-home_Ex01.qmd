@@ -182,6 +182,19 @@ The below code chunk uses multiple functions to create a ridgeline plot segmenti
 -   `theme_ridges()`: a specially designed theme to make ridgeline plot looks better
 
 ```{r}
+ggplot(filter(ship, Ship_Type != "None", rev_to_cost_ratio <= 10), 
+       aes(x = rev_to_cost_ratio)) +
+  geom_histogram(bins = 30, color="grey25",fill = "grey90") +
+  facet_wrap(~ Ship_Type, scales = "free_x") +
+  scale_fill_viridis_d() +
+  labs(title = "Distribution of Revenue-to-Cost Ratio by Ship Type",
+       x = "Revenue-to-Cost Ratio",
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
 ggplot(filter(ship,Ship_Type != "None"),
        aes(x = rev_to_cost_ratio, 
            y = Ship_Type, 
@@ -305,6 +318,20 @@ Ship maintenance and repair play a crucial role in the maritime industry, ensuri
 To analyze how maintenance status impacts energy efficiency, we use ridgeline plots to visualize the distribution of efficiency indicators across different maintenance statuses.
 
 The below code chunk uses `ggplot()`, `stat_density_ridges()`, `scale_fill_viridis_d()`, `scale_x_continuous()` and `theme_ridges()` to plot ridgeline plots of energy efficiency Maintenance status, excluding records where Engine Type is "None", Ship Type is "None" or Maintenance status is "None". Additionally, `facet_wrap()` is used to arrange the plots into separate grid by Ship type.
+
+```{r}
+ggplot(filter(ship, Engine_Type != "None", Ship_Type != "None",
+              Maintenance_Status != "None"), 
+       aes(x = Efficiency_nm_per_kWh)) +
+  geom_histogram(bins = 30, color="grey25",fill = "grey90") +
+  facet_wrap(~ Maintenance_Status, scales = "free_x") +
+  scale_fill_viridis_d() +
+  labs(title = "Distribution of Revenue-to-Cost Ratio by Ship Type",
+       x = "Revenue-to-Cost Ratio",
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
 
 ```{r}
 ggplot(filter(ship, Engine_Type != "None", Ship_Type != "None",

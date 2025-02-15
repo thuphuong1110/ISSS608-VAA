@@ -37,7 +37,7 @@ website:
         menu: 
         - text: "4 - Fundamentals of Visual Analytics"
           href: In-class_Ex/In-class_Ex04/In-class_Ex04.html
-        - text: "5"
+        - text: "5 - Visual Multivariate Analysis"
           href: In-class_Ex/In-class_Ex05/In-class_Ex05.html
         - text: "6"
           href: In-class_Ex/In-class_Ex06/In-class_Ex06.html
