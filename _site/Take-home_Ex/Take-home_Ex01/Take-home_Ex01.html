@@ -195,7 +195,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex05/In-class_Ex05.html">
- <span class="dropdown-text">5</span></a>
+ <span class="dropdown-text">5 - Visual Multivariate Analysis</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex06/In-class_Ex06.html">
@@ -315,7 +315,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 15, 2025</p>
+      <p class="date-modified">February 16, 2025</p>
     </div>
   </div>
     
@@ -497,77 +497,102 @@ $ Average_Load_Percentage &lt;dbl&gt; 93.76925, 93.89537, 96.21824, 66.19370, 80
 <h1 data-number="4"><span class="header-section-number">4</span> Analytical Visualization</h1>
 <section id="profitability-by-ship-and-engine-type" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="profitability-by-ship-and-engine-type"><span class="header-section-number">4.1</span> Profitability by Ship and Engine Type</h2>
-<p><a href="https://www.data-to-viz.com/graph/ridgeline.html"><em>Ridgeline plot</em></a> (also known as Joyplot), is a visualization technique that effectively reveals the distribution of a numeric value across multiple groups. They present a series of density plots or histograms, aligned on the same horizontal scale with slight overlap, allowing for easy comparison of distributions between groups.</p>
 <section id="profitability-by-ship-type" class="level3" data-number="4.1.1">
 <h3 data-number="4.1.1" class="anchored" data-anchor-id="profitability-by-ship-type"><span class="header-section-number">4.1.1</span> Profitability by Ship Type</h3>
 <p>First we look at the Revenue to Cost Ratio distribution by Ship Type as a profitability indicator to understand if there is any significant difference among the Ship types.</p>
-<p>The below code chunk uses multiple functions to create a ridgeline plot segmenting the Revenue to Cost Ratio into four quartiles, providing insights into how different ship types perform across the distribution.</p>
+<p>The below code chunk uses multiple functions to create a combined plot of Average Revenue to Cost Ratio and distribution by Ship type:</p>
 <ul>
-<li><p><code>ggplot()</code>: initialize the ggplot object, declare the input data frame <code>ship</code> (using <code>filter()</code> to exclude Ship Type = “None”), and fill color by quantile using <code>stat(quantile)</code></p></li>
+<li><p><code>ggplot()</code>: initialize the ggplot object, declare the input data frame <code>ship</code> (using <code>filter()</code> to exclude Ship Type = “None” and rev_to_cost_ratio larger than 10)</p></li>
+<li><p><code>geom_col()</code>: plot column chart of average revenue to cost ratio</p></li>
+<li><p><code>geom_histogram()</code>: plot histograms of revenue to cost ratio distribution by Ship type</p></li>
+<li><p><code>geom_text</code>, <code>labs()</code>, <code>theme_minimal()</code>, <code>theme()</code>: define the aesthetics of the plot</p></li>
+<li><p>patchwork: using <code>+</code> sign to join the column and histogram charts following a two columns layout.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average revenue-to-cost ratio by Ship_Type</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>avg_rev_to_cost <span class="ot">&lt;-</span> ship <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Ship_Type) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_ratio =</span> <span class="fu">mean</span>(rev_to_cost_ratio, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create column chart</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">ggplot</span>(avg_rev_to_cost, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Ship_Type, <span class="sc">-</span>avg_ratio), <span class="at">y =</span> avg_ratio)) <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">fill =</span> <span class="st">"skyblue"</span>) <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(avg_ratio, <span class="dv">2</span>)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Revenue-to-Cost Ratio by Ship Type"</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Ship Type"</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Average Revenue-to-Cost Ratio"</span>) <span class="sc">+</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create histogram chart</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>, rev_to_cost_ratio <span class="sc">&lt;=</span> <span class="dv">10</span>), </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> rev_to_cost_ratio)) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">color=</span><span class="st">"grey25"</span>,<span class="at">fill =</span> <span class="st">"skyblue"</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Ship_Type, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Revenue-to-Cost Ratio by Ship Type"</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Revenue-to-Cost Ratio"</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Observations</strong></p>
+<p>The column chart reveals minimal differences in the average revenue-to-cost ratio across ship types. Bulk Carriers have the highest average ratio at 4.26, while Container Ships have the lowest at 3.78.</p>
+<p>Examining the distribution of revenue-to-cost ratios for each ship type, the histograms indicate that all ship types exhibit right-skewed distributions. Approximately 75% of ships across all types have a ratio below 5, highlighting that exceptionally high profitability is relatively uncommon.</p>
+<p>Tankers and Container Ships display a wider spread, suggesting greater variability in profitability. In contrast, Bulk Carriers and Fish Carriers show a more compact distribution, particularly in the ratio range below 2.5, indicating more consistent financial performance.</p>
+<p>Notably, all ship types have some instances where the revenue-to-cost ratio exceeds 7.5, suggesting that a small subset of ships operates with significantly higher profitability. Further investigation is needed to identify the factors driving these outliers.</p>
+</section>
+<section id="profitability-by-ship-and-engine-type-1" class="level3" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="profitability-by-ship-and-engine-type-1"><span class="header-section-number">4.1.2</span> Profitability by Ship and Engine Type</h3>
+<p>The below code chunk plot ridgeline plots of Revenue to Cost Ratios by Ship and engine type using the below functions:</p>
+<ul>
+<li><p><code>ggplot()</code>: initialize the ggplot object, declare the input data frame <code>ship</code> (using <code>filter()</code> to exclude Ship Type = “None” or Engine Type = “None”), and fill color by quantile using <code>stat(quantile)</code></p></li>
 <li><p><code>stat_density_ridges()</code>: plot ridgeline plot with gradient filled color</p></li>
 <li><p><code>scale_fill_viridis_d()</code>: define the colour maps to be used for rigdeline plot</p></li>
 <li><p><code>ggtitle()</code>: define main title, subtitle or caption for the plot</p></li>
 <li><p><code>theme_ridges()</code>: a specially designed theme to make ridgeline plot looks better</p></li>
+<li><p><code>facet_wrap()</code>: arrange the plots into separate grid by Ship type</p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship,Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>),</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> rev_to_cost_ratio, </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> Ship_Type, </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">stat</span>(quantile))</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>           )) <span class="sc">+</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_ridges</span>(</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"density_ridges_gradient"</span>,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">calc_ecdf =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantiles =</span> <span class="dv">4</span>,</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantile_lines =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">to =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">name =</span> <span class="st">"Quartiles"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="at">label =</span> <span class="st">"Revenue to Cost Ratio by Ship Type"</span>) <span class="sc">+</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_ridges</span>(<span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Engine_Type <span class="sc">!=</span> <span class="st">"None"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> rev_to_cost_ratio, </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> ship_engine_type,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">stat</span>(quantile)))) <span class="sc">+</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_ridges</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"density_ridges_gradient"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">calc_ecdf =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantiles =</span> <span class="dv">4</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantile_lines =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">to =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">name =</span> <span class="st">"Quartiles"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Revenue to Cost Ratio"</span>,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Ship_Type, <span class="at">scales =</span> <span class="st">"free_y"</span>)<span class="sc">+</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Revenue to Cost Ratio by Ship Type and Engine Type"</span>) <span class="sc">+</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_ridges</span>(<span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="1056"></p>
 </figure>
 </div>
 </div>
 </div>
 <p><strong>Key Observations</strong></p>
-<p>The plot reveals that 75% of all ship types have a revenue-to-cost ratio below 5, covering the first three quartiles. The distributions are approximately normal, indicating operational consistency but also limited opportunities for exceptional financial performance. However, the right-skewed nature suggests that while rare, some ships achieve significantly higher profitability.</p>
-<p>Among the ship types, Tankers and Fish Carriers show slightly greater representation in the higher quartiles, indicating a tendency for higher revenue relative to cost. Further analysis is needed to determine whether this advantage stems from specific routes, cargo types, or operational efficiencies that contribute to superior financial performance.</p>
-</section>
-<section id="profitability-by-ship-and-engine-type-1" class="level3" data-number="4.1.2">
-<h3 data-number="4.1.2" class="anchored" data-anchor-id="profitability-by-ship-and-engine-type-1"><span class="header-section-number">4.1.2</span> Profitability by Ship and Engine Type</h3>
-<p>Similar to the above plot, the below code chunk uses <code>ggplot()</code>, <code>stat_density_ridges()</code>, <code>scale_fill_viridis_d()</code>, <code>scale_x_continuous()</code> and <code>theme_ridges()</code> to plot ridgeline plots of Revenue to Cost Ratios by Ship and engine type. Records where Engine Type is “None” or Ship Type is “None” are excluded. Additionally, we use <code>facet_wrap()</code> to arrange the plots into separate grid by Ship type.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Engine_Type <span class="sc">!=</span> <span class="st">"None"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> rev_to_cost_ratio, </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> ship_engine_type,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">stat</span>(quantile)))) <span class="sc">+</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_ridges</span>(</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"density_ridges_gradient"</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">calc_ecdf =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantiles =</span> <span class="dv">4</span>,</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantile_lines =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">to =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">name =</span> <span class="st">"Quartiles"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Revenue to Cost Ratio"</span>,</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Ship_Type, <span class="at">scales =</span> <span class="st">"free_y"</span>)<span class="sc">+</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Revenue to Cost Ratio by Ship Type and Engine Type"</span>) <span class="sc">+</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_ridges</span>(<span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="1056"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Key Observations</strong></p>
-<p>Similar to the plots at ship types level, for all ship and engine types combination, the majority (75%) of revenue-to-cost ratios still fall below 5. All distributions are still right-skewed, indicating ships achieving exceptionally high profitability across al ship and engine type.</p>
+<p>Similar to the plots at ship types level, for all ship and engine types combination, the majority (75%) of revenue-to-cost ratios fall below 5. All distributions are right-skewed, indicating ships achieving exceptionally high profitability across all ship and engine type.</p>
 <p>For Fish carrier and Tanker, Diesel-powered ships show a wider spread of the lower three quartiles, suggesting higher proportion of ships with high revenue to cost ratio compared to the other 2 engine types. For Bulk carrier and Container ship, Heavy Fuel Oil (HFO) ships display slightly higher revenue to cost ratios than diesel variants, especially in the third quartile.</p>
 <p>Notably for Container ship, Steam turbine-powered shows a stronger skew towards higher revenue to cost ratio, suggesting this engine type may offer higher financial performance for Container ship, potentially due to higher fuel efficiency at certain operational loads.</p>
 </section>
@@ -579,22 +604,22 @@ $ Average_Load_Percentage &lt;dbl&gt; 93.76925, 93.89537, 96.21824, 66.19370, 80
 <p>To assess whether energy efficiency is a key driver of profitability, we analyze its relationship with the Revenue-to-Cost Ratio. In this section, we examine ship energy efficiency, measured in nautical miles per kilowatt-hour, which enables fair comparisons across different vessels.</p>
 <p>The below code chunk uses <code>ggbetweenstats()</code> function from <strong>ggstatsplot</strong> to create violin plots and perform one-way ANOVA test to compare energy efficiency across ship types.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggbetweenstats</span>(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ship, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>),</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> Ship_Type, </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> Efficiency_nm_per_kWh,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"p"</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean.ci =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">pairwise.comparisons =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">pairwise.display =</span> <span class="st">"s"</span>,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">p.adjust.method =</span> <span class="st">"fdr"</span>,</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">messages =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship Type"</span>) <span class="sc">+</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggbetweenstats</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ship, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> Ship_Type, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> Efficiency_nm_per_kWh,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"p"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean.ci =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">pairwise.comparisons =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">pairwise.display =</span> <span class="st">"s"</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">p.adjust.method =</span> <span class="st">"fdr"</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">messages =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship Type"</span>) <span class="sc">+</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -604,27 +629,27 @@ $ Average_Load_Percentage &lt;dbl&gt; 93.76925, 93.89537, 96.21824, 66.19370, 80
 <p>Bulk Carriers have the highest mean efficiency (~0.82 nm/kWh), followed by Container Ships (~0.80 nm/kWh), Fish Carriers (~0.79 nm/kWh), and Tankers (~0.78 nm/kWh). However, the differences in mean efficiency are small, indicating that ship type alone is not a major determinant of efficiency. Given these observations, further analysis could explore other operational factors that may play a more critical role in ship’s energy efficiency.</p>
 <p>We proceed to examine energy efficiency by ship and engine type.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Engine_Type <span class="sc">!=</span> <span class="st">"None"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Efficiency_nm_per_kWh, </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> ship_engine_type,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">stat</span>(quantile)))) <span class="sc">+</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_ridges</span>(</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"density_ridges_gradient"</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">calc_ecdf =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantiles =</span> <span class="dv">4</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantile_lines =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">name =</span> <span class="st">"Quartiles"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Energy efficiency in nm per kWh"</span>,</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Ship_Type, <span class="at">scales =</span> <span class="st">"free_y"</span>)<span class="sc">+</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship and Engine Type"</span>) <span class="sc">+</span></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_ridges</span>(<span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Engine_Type <span class="sc">!=</span> <span class="st">"None"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Efficiency_nm_per_kWh, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> ship_engine_type,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">stat</span>(quantile)))) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_ridges</span>(</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"density_ridges_gradient"</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">calc_ecdf =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantiles =</span> <span class="dv">4</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantile_lines =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">name =</span> <span class="st">"Quartiles"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Energy efficiency in nm per kWh"</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Ship_Type, <span class="at">scales =</span> <span class="st">"free_y"</span>)<span class="sc">+</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship and Engine Type"</span>) <span class="sc">+</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_ridges</span>(<span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="1056"></p>
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="1056"></p>
 </figure>
 </div>
 </div>
@@ -639,28 +664,28 @@ $ Average_Load_Percentage &lt;dbl&gt; 93.76925, 93.89537, 96.21824, 66.19370, 80
 <p>To analyze how maintenance status impacts energy efficiency, we use ridgeline plots to visualize the distribution of efficiency indicators across different maintenance statuses.</p>
 <p>The below code chunk uses <code>ggplot()</code>, <code>stat_density_ridges()</code>, <code>scale_fill_viridis_d()</code>, <code>scale_x_continuous()</code> and <code>theme_ridges()</code> to plot ridgeline plots of energy efficiency Maintenance status, excluding records where Engine Type is “None”, Ship Type is “None” or Maintenance status is “None”. Additionally, <code>facet_wrap()</code> is used to arrange the plots into separate grid by Ship type.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Engine_Type <span class="sc">!=</span> <span class="st">"None"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>,</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>              Maintenance_Status <span class="sc">!=</span> <span class="st">"None"</span>), </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Efficiency_nm_per_kWh, </span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> Maintenance_Status,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">stat</span>(quantile)))) <span class="sc">+</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_ridges</span>(</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"density_ridges_gradient"</span>,</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">calc_ecdf =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantiles =</span> <span class="dv">4</span>,</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantile_lines =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">name =</span> <span class="st">"Quartiles"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Energy efficiency in nm per kWh"</span>,</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Ship_Type, <span class="at">scales =</span> <span class="st">"free_y"</span>)<span class="sc">+</span></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="at">label =</span> <span class="st">"Energy Efficiency by Maintenance Status of Different Ship Types"</span>) <span class="sc">+</span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_ridges</span>(<span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Engine_Type <span class="sc">!=</span> <span class="st">"None"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>              Maintenance_Status <span class="sc">!=</span> <span class="st">"None"</span>), </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Efficiency_nm_per_kWh, </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> Maintenance_Status,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">stat</span>(quantile)))) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_ridges</span>(</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"density_ridges_gradient"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">calc_ecdf =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantiles =</span> <span class="dv">4</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantile_lines =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">name =</span> <span class="st">"Quartiles"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Energy efficiency in nm per kWh"</span>,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Ship_Type, <span class="at">scales =</span> <span class="st">"free_y"</span>)<span class="sc">+</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="at">label =</span> <span class="st">"Energy Efficiency by Maintenance Status of Different Ship Types"</span>) <span class="sc">+</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_ridges</span>(<span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -684,73 +709,7 @@ $ Average_Load_Percentage &lt;dbl&gt; 93.76925, 93.89537, 96.21824, 66.19370, 80
 <section id="calm-weather" class="level4" data-number="4.2.3.1">
 <h4 data-number="4.2.3.1" class="anchored" data-anchor-id="calm-weather"><span class="header-section-number">4.2.3.1</span> Calm Weather</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Weather_Condition <span class="sc">==</span> <span class="st">"Calm"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Ship_Type, </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> Efficiency_nm_per_kWh)) <span class="sc">+</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_halfeye</span>(<span class="at">adjust =</span> <span class="fl">0.5</span>,</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">justification =</span> <span class="sc">-</span><span class="fl">0.1</span>,</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">.width =</span> <span class="dv">1</span>,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">point_colour =</span> <span class="cn">NA</span>,</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">scale =</span> <span class="fl">0.55</span>) <span class="sc">+</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> .<span class="dv">15</span>,</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_dots</span>(<span class="at">side =</span> <span class="st">"left"</span>, </span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">justification =</span> <span class="fl">1.1</span>, </span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">binwidth =</span> <span class="fl">0.05</span>,</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">dotsize =</span> <span class="fl">0.1</span>,</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">+</span></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship Type in Calm Weather"</span>) <span class="sc">+</span></span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_economist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Key Observations</strong></p>
-<p>Bulk Carriers and Container Ships tend to exhibit slightly higher energy efficiency in calm weather compared to Fish Carriers and Tankers. Among them, Container Ships show the highest median efficiency, suggesting they perform the best under calm conditions. For the remaining ship types, the median efficiency remains fairly similar, indicating that weather alone may not be a major differentiator in efficiency under calm weather condition.</p>
-<p>The density distributions (clouds above the box plots) reveal that most ships operate within a similar efficiency range, but Bulk Carriers and Container Ships have a higher concentration of outliers on the upper end, suggesting that some vessels achieve exceptionally high efficiency. Conversely, outliers on the lower end are present across all ship types, indicating that certain ships struggle with efficiency even in calm weather, warranting further investigation into maintenance, operational factors, or design inefficiencies.</p>
-</section>
-<section id="moderate-weather" class="level4" data-number="4.2.3.2">
-<h4 data-number="4.2.3.2" class="anchored" data-anchor-id="moderate-weather"><span class="header-section-number">4.2.3.2</span> Moderate Weather</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Weather_Condition <span class="sc">==</span> <span class="st">"Moderate"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Ship_Type, </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> Efficiency_nm_per_kWh)) <span class="sc">+</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_halfeye</span>(<span class="at">adjust =</span> <span class="fl">0.5</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">justification =</span> <span class="sc">-</span><span class="fl">0.1</span>,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">.width =</span> <span class="dv">1</span>,</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">point_colour =</span> <span class="cn">NA</span>,</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">scale =</span> <span class="fl">0.55</span>) <span class="sc">+</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> .<span class="dv">15</span>,</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_dots</span>(<span class="at">side =</span> <span class="st">"left"</span>, </span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">justification =</span> <span class="fl">1.1</span>, </span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">binwidth =</span> <span class="fl">0.05</span>,</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">dotsize =</span> <span class="fl">0.1</span>,</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">+</span></span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship Type in Moderate Weather"</span>) <span class="sc">+</span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_economist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Key Observations</strong></p>
-<p>The overall shape of the density distributions remains similar to that in calm weather, indicating that moderate weather does not drastically alter ship efficiency. However, the broader spread suggests that moderate weather introduces additional operational challenges, leading to greater variability in performance across ship types.</p>
-<p>The median energy efficiency values are more comparable across ship types than in calm weather. Interestingly, Container Ships, which had the highest median efficiency in calm conditions, now have the lowest median in moderate weather, suggesting they may be more affected by changing conditions. Tankers and Fish Carriers exhibit the narrowest interquartile range (IQR), indicating that their efficiency remains more stable in moderate weather. Conversely, Bulk Carriers and Container Ships show higher variation, with distributions extending towards both lower and higher efficiency values, suggesting that external factors from weather condition impact their performance more significantly than other ship types.</p>
-</section>
-<section id="rough-weather" class="level4" data-number="4.2.3.3">
-<h4 data-number="4.2.3.3" class="anchored" data-anchor-id="rough-weather"><span class="header-section-number">4.2.3.3</span> Rough Weather</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Weather_Condition <span class="sc">==</span> <span class="st">"Rough"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Weather_Condition <span class="sc">==</span> <span class="st">"Calm"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Ship_Type, </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> Efficiency_nm_per_kWh)) <span class="sc">+</span></span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_halfeye</span>(<span class="at">adjust =</span> <span class="fl">0.5</span>,</span>
@@ -766,12 +725,78 @@ $ Average_Load_Percentage &lt;dbl&gt; 93.76925, 93.89537, 96.21824, 66.19370, 80
 <span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">dotsize =</span> <span class="fl">0.1</span>,</span>
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">+</span></span>
 <span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship Type in Rough Weather"</span>) <span class="sc">+</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship Type in Calm Weather"</span>) <span class="sc">+</span></span>
 <span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_economist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Observations</strong></p>
+<p>Bulk Carriers and Container Ships tend to exhibit slightly higher energy efficiency in calm weather compared to Fish Carriers and Tankers. Among them, Container Ships show the highest median efficiency, suggesting they perform the best under calm conditions. For the remaining ship types, the median efficiency remains fairly similar, indicating that weather alone may not be a major differentiator in efficiency under calm weather condition.</p>
+<p>The density distributions (clouds above the box plots) reveal that most ships operate within a similar efficiency range, but Bulk Carriers and Container Ships have a higher concentration of outliers on the upper end, suggesting that some vessels achieve exceptionally high efficiency. Conversely, outliers on the lower end are present across all ship types, indicating that certain ships struggle with efficiency even in calm weather, warranting further investigation into maintenance, operational factors, or design inefficiencies.</p>
+</section>
+<section id="moderate-weather" class="level4" data-number="4.2.3.2">
+<h4 data-number="4.2.3.2" class="anchored" data-anchor-id="moderate-weather"><span class="header-section-number">4.2.3.2</span> Moderate Weather</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Weather_Condition <span class="sc">==</span> <span class="st">"Moderate"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Ship_Type, </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> Efficiency_nm_per_kWh)) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_halfeye</span>(<span class="at">adjust =</span> <span class="fl">0.5</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">justification =</span> <span class="sc">-</span><span class="fl">0.1</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">.width =</span> <span class="dv">1</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">point_colour =</span> <span class="cn">NA</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">scale =</span> <span class="fl">0.55</span>) <span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> .<span class="dv">15</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_dots</span>(<span class="at">side =</span> <span class="st">"left"</span>, </span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">justification =</span> <span class="fl">1.1</span>, </span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">binwidth =</span> <span class="fl">0.05</span>,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">dotsize =</span> <span class="fl">0.1</span>,</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">+</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship Type in Moderate Weather"</span>) <span class="sc">+</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_economist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Observations</strong></p>
+<p>The overall shape of the density distributions remains similar to that in calm weather, indicating that moderate weather does not drastically alter ship efficiency. However, the broader spread suggests that moderate weather introduces additional operational challenges, leading to greater variability in performance across ship types.</p>
+<p>The median energy efficiency values are more comparable across ship types than in calm weather. Interestingly, Container Ships, which had the highest median efficiency in calm conditions, now have the lowest median in moderate weather, suggesting they may be more affected by changing conditions. Tankers and Fish Carriers exhibit the narrowest interquartile range (IQR), indicating that their efficiency remains more stable in moderate weather. Conversely, Bulk Carriers and Container Ships show higher variation, with distributions extending towards both lower and higher efficiency values, suggesting that external factors from weather condition impact their performance more significantly than other ship types.</p>
+</section>
+<section id="rough-weather" class="level4" data-number="4.2.3.3">
+<h4 data-number="4.2.3.3" class="anchored" data-anchor-id="rough-weather"><span class="header-section-number">4.2.3.3</span> Rough Weather</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(ship, Weather_Condition <span class="sc">==</span> <span class="st">"Rough"</span>, Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>), </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Ship_Type, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> Efficiency_nm_per_kWh)) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_halfeye</span>(<span class="at">adjust =</span> <span class="fl">0.5</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">justification =</span> <span class="sc">-</span><span class="fl">0.1</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">.width =</span> <span class="dv">1</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">point_colour =</span> <span class="cn">NA</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">scale =</span> <span class="fl">0.55</span>) <span class="sc">+</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> .<span class="dv">15</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_dots</span>(<span class="at">side =</span> <span class="st">"left"</span>, </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">justification =</span> <span class="fl">1.1</span>, </span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">binwidth =</span> <span class="fl">0.05</span>,</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">dotsize =</span> <span class="fl">0.1</span>,</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">+</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Energy Efficiency by Ship Type in Rough Weather"</span>) <span class="sc">+</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_economist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -785,7 +810,7 @@ $ Average_Load_Percentage &lt;dbl&gt; 93.76925, 93.89537, 96.21824, 66.19370, 80
 </section>
 <section id="conclusion" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Conclusion</h1>
-<p>The analysis reveals that Tankers and Fish Carriers tend to achieve better financial performance, with engine type playing a crucial role in revenue-to-cost ratio variations. While ship type alone does not significantly impact energy efficiency, engine type introduces noticeable differences, particularly for Bulk Carriers, Container Ships, and Fish Carriers.</p>
+<p>The visual analysis reveals that Bulk Carriers have the highest average Revenue to cost ratio, with engine type playing an important role in revenue-to-cost ratio variations. While ship type alone does not significantly impact energy efficiency, engine type introduces noticeable differences, particularly for Bulk Carriers, Container Ships, and Fish Carriers.</p>
 <p>Weather conditions further influence efficiency variability, with moderate and rough weather amplifying fluctuations. Container Ships are the most affected by changing conditions, while Tankers experience significant efficiency declines in rough weather. Given these insights, further investigation into engine selection, maintenance strategies, and ship design is essential to optimize both profitability and energy efficiency under varying operational conditions.</p>
 
 

@@ -51,7 +51,7 @@ website:
           href: In-class_Ex/In-class_Ex10/In-class_Ex10.html
       - text: "Take-home Exercise"
         menu: 
-        - text: "1 - Creating data visualisation beyond default"
+        - text: "1 - Create data visualisation beyond default"
           href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
     right:
       - href: index.qmd
