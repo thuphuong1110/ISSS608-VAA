@@ -33,6 +33,8 @@ website:
           href: "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex054.html"
         - text: "5.5 - Treemap Visualisation with R"
           href: "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex055.html"
+        - text: "7 - Visualising and Analysing Time-oriented Data"
+          href: "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html"
       - text: "In-class Exercise"
         menu: 
         - text: "4 - Fundamentals of Visual Analytics"
