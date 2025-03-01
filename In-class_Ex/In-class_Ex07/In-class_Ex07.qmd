@@ -1,0 +1,194 @@
+---
+title: "In-class Exercise 7: Visualising and Analysing Time-oriented Data"
+author: "Nguyen Bao Thu Phuong"
+date: "3 January 2025" 
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+  warning: false
+---
+
+# Getting Started
+
+## Install R packages
+
+```{r}
+pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal)
+```
+
+Load in the dataset
+
+```{r}
+ts_data = read_csv("data/visitor_arrivals_by_air.csv")
+```
+
+```{r}
+ts_data$`Month-Year`= dmy(ts_data$`Month-Year`)
+```
+
+## Conventional base `ts` object versus `tibble` object
+
+```{r}
+ts_data_ts <- ts(ts_data)       
+head(ts_data_ts)
+```
+
+## Converting `tibble` object to `tsibble` object
+
+```{r}
+ts_tsibble <- ts_data %>%
+  mutate(Month = yearmonth(`Month-Year`)) %>%
+  as_tsibble(index = `Month`)
+```
+
+# Visualising Time-series Data
+
+```{r}
+ts_longer <- ts_data %>%
+  pivot_longer(cols = c(2:34),
+               names_to = "Country",
+               values_to = "Arrivals")
+```
+
+## Visualising single time-series: ggplot2 methods
+
+```{r}
+ts_longer %>%
+  filter(Country == "Vietnam") %>%
+  ggplot(aes(x = `Month-Year`, 
+             y = Arrivals))+
+  geom_line(size = 0.5)
+```
+
+## Plotting multiple time-series data with ggplot2 methods
+
+```{r}
+ggplot(data = ts_longer, 
+       aes(x = `Month-Year`, 
+           y = Arrivals,
+           color = Country))+
+  geom_line(size = 0.5) +
+  theme(legend.position = "bottom", 
+        legend.box.spacing = unit(0.5, "cm"))
+```
+
+Trellis plot
+
+```{r}
+#| fig-height: 12
+ggplot(data = ts_longer, 
+       aes(x = `Month-Year`, 
+           y = Arrivals))+
+  geom_line(size = 0.5) +
+  facet_wrap(~ Country,
+             ncol = 3,
+             scales = "free_y") +
+  theme_bw()
+```
+
+# Visual Analysis of Time-series Data with Seasonality
+
+```{r}
+tsibble_longer <- ts_tsibble %>%
+  pivot_longer(cols = c(2:34),
+               names_to = "Country",
+               values_to = "Arrivals")
+```
+
+## Visual Analysis of Seasonality with Seasonal Plot
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Italy" |
+         Country == "Vietnam" |
+         Country == "United Kingdom" |
+         Country == "Germany") %>% 
+  gg_season(Arrivals)
+```
+
+## Visual Analysis of Seasonality with Cycle Plot
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Italy") %>% 
+  autoplot(Arrivals) + 
+  facet_grid(Country ~ ., scales = "free_y")
+```
+
+```{r}
+#| fig-height: 6
+tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Italy") %>% 
+  gg_subseries(Arrivals)
+```
+
+## Multiple time-series decomposition
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  ACF(Arrivals) %>%
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  PACF(Arrivals) %>%
+  autoplot()
+```
+
+# Visual Forecasting
+
+## Time Series Data Sampling
+
+```{r}
+vietnam_ts <- tsibble_longer %>%
+  filter(Country == "Vietnam") %>% 
+  mutate(Type = if_else(
+    `Month-Year` >= "2019-01-01", 
+    "Hold-out", "Training"))
+```
+
+Filter for training dataset
+
+```{r}
+vietnam_train <- vietnam_ts %>%
+  filter(`Month-Year` < "2019-01-01")
+```
+
+## Exploratory Data Analysis (EDA): Time Series Data
+
+```{r}
+vietnam_train %>%
+  model(stl = STL(Arrivals)) %>%
+  components() %>%
+  autoplot()
+```
+
+## Fitting forecasting models
+
+```{r}
+fit_ses <- vietnam_train %>%
+  model(ETS(Arrivals ~ error("A") 
+            + trend("N") 
+            + season("N")))
+fit_ses
+```
+
+Examine model assumptions
+
+```{r}
+gg_tsresiduals(fit_ses)
+```
