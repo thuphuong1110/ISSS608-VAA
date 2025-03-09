@@ -47,6 +47,8 @@ website:
         menu: 
         - text: "1 - Create data visualisation beyond default"
           href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
+        - text: "2 - Be Tradewise or Otherwise"
+          href: Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html
     right:
       - href: index.qmd
         text: Home
