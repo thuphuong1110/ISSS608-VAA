@@ -41,6 +41,8 @@ website:
           href: "Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex082.html"
         - text: "8.3 - Analytical Mapping"
           href: "Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex083.html"
+        - text: "9 - Modelling, Visualising and Analysing Network Data with R"
+          href: "Hands-on_Ex/Hands-on_Ex09/Hands-on_Ex09.html"
       - text: "In-class Exercise"
         menu: 
         - text: "4 - Fundamentals of Visual Analytics"
