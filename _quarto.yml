@@ -43,6 +43,8 @@ website:
           href: "Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex083.html"
         - text: "9 - Modelling, Visualising and Analysing Network Data with R"
           href: "Hands-on_Ex/Hands-on_Ex09/Hands-on_Ex09.html"
+        - text: "10 - Information Dashboard Design: R methods"
+          href: "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html"
       - text: "In-class Exercise"
         menu: 
         - text: "4 - Fundamentals of Visual Analytics"
@@ -51,6 +53,8 @@ website:
           href: In-class_Ex/In-class_Ex05/In-class_Ex05.html
         - text: "7 - Visualising and Analysing Time-oriented Data"
           href: In-class_Ex/In-class_Ex07/In-class_Ex07.html
+        - text: "9 - Modelling, Visualising and Analysing Network Data with R"
+          href: In-class_Ex/In-class_Ex09/In-class_Ex09.html
       - text: "Take-home Exercise"
         menu: 
         - text: "1 - Create data visualisation beyond default"
