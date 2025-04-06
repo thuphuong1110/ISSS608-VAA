@@ -1011,7 +1011,7 @@ Inverse Distance Weighted (IDW) is a simple and fast way to interpolate weather 
     -   idp: inverse distance power
 
 | IDP Value | Effect |
-|------------------------------------|------------------------------------|
+|----|----|
 | idp = 0 | All points are weighted equally, resulting in a **simple average** of values. |
 | idp = 1 | **Linear decay** – Nearby points have more influence, but far points still contribute. |
 | idp \> 1 | **More localized interpolation** – Nearby points dominate, making the interpolation sharper. |

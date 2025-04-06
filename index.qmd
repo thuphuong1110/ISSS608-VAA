@@ -11,3 +11,5 @@ execute:
 # Welcome to my Visual Analytics Learning Journey
 
 Hello there! I am Phuong. Welcome to my **ISSS608 Visual Analytics and Application** homepage. This course is taught by Prof [KAM Tin Seong](https://faculty.smu.edu.sg/profile/kam-tin-seong-486) as part of my [Master of IT in Business program](https://masters.smu.edu.sg/programme/master-of-it-in-business) at Singapore Management University. In this website, you will find my coursework prepared for this course, encompassing practical application of different techniques to transform and analyze data.
+
+![](images/clipboard-4283868585.png)
